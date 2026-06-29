@@ -17,18 +17,14 @@ def get_pchome_price(keyword):
         driver.get(url)
         
         print("網頁外框載入完畢，正在往下滾動以觸發價格顯示...")
-        # 稍微滾動多一點，確保第一排商品完全載入
         driver.execute_script("window.scrollBy(0, 800);")
         time.sleep(3) 
         
-        # 改變策略：不再死守特定的 CSS Class，而是用 XPath 抓取所有可能包含價格的元素
         elements = driver.find_elements(By.XPATH, "//*[contains(@class, 'value') or contains(@class, 'price')]")
         
         for el in elements:
-            # 取得網頁上的文字，並把 $ 和逗號清除乾淨 (例如把 "$14,490" 變成 "14490")
             raw_text = el.text.strip().replace('$', '').replace(',', '')
             
-            # 邏輯判斷：如果這串文字「全部都是數字」，且長度合理（大於等於3位數），我們就認定它是價格！
             if raw_text.isdigit() and len(raw_text) >= 3:
                 print(f"🎉 突破盲點！成功找到 {keyword} 的最新價格為: $ {raw_text}")
                 return raw_text
